@@ -1,0 +1,87 @@
+# Java 编译生成的文件
+*.class
+*.jar
+*.war
+*.ear
+
+# maven 本地仓库生成的文件
+target/
+*.log
+
+# Spring Boot 配置
+application-*.properties
+application-*.yml
+
+# 环境变量文件
+.env
+*.env
+
+# 操作系统相关文件
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDE 文件
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# 包管理器
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# 版本管理工具产生的文件
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 日志文件
+logs/
+*.log
+*.pid
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+*.swp
+*.seed.lock
+*.json.lock
+*.yarnintegrity
+# 机器学习/缓存生成的文件
+run/
+logs/**/*.lock
+# 以上包括docker/环境种植
+
+# 临时文件
+*.tmp
+*.bak
+.*.swp
+
+# 构建工具产生的文件
+.build/
+
+# 数据库文件
+*.db
+*.sql
+*.sqlite
+env.
+pdf .
+seed-json=
+
+#测试文件
+test/
