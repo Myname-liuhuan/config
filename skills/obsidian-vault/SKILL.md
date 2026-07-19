@@ -1,6 +1,6 @@
 ---
 name: obsidian-vault
-description: Use when the user wants to find, read, write, save, or update notes in their personal Obsidian knowledge base vault. Triggers on phrases like "笔记", "知识库", "obsidian", "vault", "manifest.md", or folder names like designs/, sessions/, issues/, branches/, docs/, 3_Resources/tech/.
+description: Use when the user wants to find, read, write, save, or update notes in their personal Obsidian knowledge base vault. Triggers on phrases like "笔记", "知识库", "obsidian", "vault", "manifest.md", "~/Documents/obsidian", "$HOME/Documents/obsidian", or folder names like designs/, sessions/, issues/, branches/, docs/, 3_Resources/tech/.
 ---
 
 # Obsidian Vault — Personal Knowledge Base
@@ -11,9 +11,9 @@ Personal Obsidian vault workflow: locate relevant notes quickly, save new notes 
 
 The vault root depends on the runtime platform. The **current** platform is:
 
-- **Windows**: `D:/file/obsidian/`
+- **macOS**: `~/Documents/obsidian/` — current working platform.
 
-macOS and Linux paths are intentionally left blank — see `references/vault-paths.md` to add them later. All Read/Write/Glob/Grep calls into the vault must resolve from the platform-appropriate root.
+All Read/Write/Glob/Grep calls into the vault must resolve from the platform-appropriate root. Shell-style `~` (or `$HOME`) is preferred over hard-coding the absolute path: keeps the skill portable across machines/usernames and avoids leaking the account name into prompts or logs. Other platforms see `references/vault-paths.md`.
 
 ## Read — locate, don't dump
 
@@ -71,4 +71,4 @@ Whenever you create or significantly change a project note, **synchronously upda
 
 ## References
 
-- `references/vault-paths.md` — per-platform vault root paths (single source of truth for adding macOS/Linux later).
+- `references/vault-paths.md` — per-platform vault root paths (macOS is current; Windows/Linux kept for reference).
