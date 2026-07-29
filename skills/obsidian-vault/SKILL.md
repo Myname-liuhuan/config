@@ -1,19 +1,23 @@
 ---
 name: obsidian-vault
-description: Use when the user wants to find, read, write, save, or update notes in their personal Obsidian knowledge base vault. Triggers on phrases like "笔记", "知识库", "obsidian", "vault", "manifest.md", "~/Documents/obsidian", "$HOME/Documents/obsidian", or folder names like designs/, sessions/, issues/, branches/, docs/, 3_Resources/tech/.
+description: Use when the user wants to find, read, write, save, or update notes in their personal Obsidian knowledge base vault. Triggers on phrases like "笔记", "知识库", "obsidian", "vault", "manifest.md", or folder names like designs/, sessions/, issues/, branches/, docs/, 3_Resources/tech/. Triggers regardless of host platform — vault root is auto-detected.
 ---
 
 # Obsidian Vault — Personal Knowledge Base
 
 Personal Obsidian vault workflow: locate relevant notes quickly, save new notes in the right folder with the standard naming convention, and keep project indexes current.
 
-## Vault Root (current platform)
+## Vault Root (auto-detect by platform)
 
-The vault root depends on the runtime platform. The **current** platform is:
+This skill is portable across machines. The path table is **hardcoded** (each platform lists its vault root below), but **which platform is current** is detected at runtime — read the system prompt's `Platform` field (`win32` / `darwin` / `linux`) and pick the matching row. **Do not pin a specific platform as "current" in this skill** — that defeats the portability.
 
-- **macOS**: `~/Documents/obsidian/` — current working platform.
+Path table (see `references/vault-paths.md` for the full list and conventions):
 
-All Read/Write/Glob/Grep calls into the vault must resolve from the platform-appropriate root. Shell-style `~` (or `$HOME`) is preferred over hard-coding the absolute path: keeps the skill portable across machines/usernames and avoids leaking the account name into prompts or logs. Other platforms see `references/vault-paths.md`.
+- Windows: `D:/file/obsidian/`
+- macOS: `~/Documents/obsidian/`
+- Linux: *TBD*
+
+All Read/Write/Glob/Grep calls into the vault must resolve from the detected platform's root. Shell-style `~` (or `$HOME`) is preferred over hard-coding the absolute path: keeps the skill portable across machines/usernames and avoids leaking the account name into prompts or logs. If the detected platform isn't in the table or the conventional path doesn't exist, ask the user before proceeding.
 
 ## Read — locate, don't dump
 
@@ -64,6 +68,42 @@ Whenever you create or significantly change a project note, **synchronously upda
 
 `manifest.md` is per-project and lives inside that project's folder. If it doesn't exist yet, **ask the user before creating it**.
 
+## Write — content discipline (final state only)
+
+Notes are written for **future implementers**, not for the author to remember the discussion. **Write only the conclusion + implementation details. Never write meta-history.**
+
+### Disallowed in note bodies
+
+| Category | Patterns |
+|---|---|
+| Self-reference to the note itself | `上一版笔记` / `上一轮笔记` / `之前笔记` / `本笔记 L100` / `见上文第 N 行` |
+| Self-reference to the discussion | `上轮讨论` / `本次讨论` / `前面讨论过` / `用户提到` / `Claude 提议` |
+| Self-attribution of contribution | `我加了` / `我写的` / `我提议` / `我建议` / `我之前漏了` |
+| Date / version anchors as preamble | `2026-XX-XX 补充:` / `新增:` / `更新:` (as paragraph opener, not inline reference) |
+| Decision archaeology | `旧→新对照表` / `A 方案 → B 方案` / `推翻 X 方案的过程` / `为什么不用 Y` |
+
+### Rewrite as
+
+| Wrong | Right |
+|---|---|
+| `上一版笔记里 X 显得重` | `X 显得重` |
+| `2026-07-29 补充:经讨论确认 Y` | `Y` (direct statement) |
+| `本笔记 L100 已记录 Z` | `Z` (restate in current paragraph or expand inline) |
+| `我提议了方案 A` | `方案 A` (describe the plan itself, not who proposed it) |
+| `A 方案(已被 B 推翻)` | Drop A and keep B; if A must be mentioned, one sentence that states the conclusion without describing the reversal |
+
+### Exceptions
+
+- `manifest.md` index entries that mark a note as `已作废` / `已撤销` are necessary (the index needs to show invalidation); this rule is for **note bodies**, not the index.
+- Implementation details, code snippets, configuration values, decision criteria — all fine, those ARE the final state.
+- Brief inline references like "see §3 below" are OK only when they point to the *current* section's content, not historical reasoning.
+
+### Why
+
+The discussion process is transient session context. The implementer opening the note 6 months later has none of that context; self-references + decision archaeology = more noise than signal, making the note longer and harder to judge "what is the actual conclusion now".
+
+---
+
 ## Typical Flow
 
 - **Read:** Glob/Grep by directory or keyword → open project's `manifest.md` if scoped → open target files → stop.
@@ -71,4 +111,4 @@ Whenever you create or significantly change a project note, **synchronously upda
 
 ## References
 
-- `references/vault-paths.md` — per-platform vault root paths (macOS is current; Windows/Linux kept for reference).
+- `references/vault-paths.md` — per-platform vault root path table; the model picks the row matching the runtime `Platform` field.
